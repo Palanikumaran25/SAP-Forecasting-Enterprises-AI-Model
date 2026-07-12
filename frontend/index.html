@@ -1,0 +1,3650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP Enterprise FI Forecasting Platform</title>
+    <!-- Modern Display Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js Dependency -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* ==========================================================================
+           1. PREMIUM GLASSMORPHISM DARK DESIGN SYSTEM
+           ========================================================================== */
+        :root {
+            /* Theme Palettes (Deep Navy & High-contrast Accents) */
+            --bg-main: #060913;
+            --bg-sidebar: #0a0e1c;
+            --border-glow: rgba(56, 189, 248, 0.15);
+            --card-glass: rgba(15, 23, 42, 0.65);
+            --card-border: rgba(255, 255, 255, 0.07);
+            
+            /* High-End Accent Colors */
+            --primary: #00e5ff;
+            --primary-glow: rgba(0, 229, 255, 0.35);
+            --secondary: #8b5cf6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dark: #64748b;
+
+            /* Status & Diagnostic Colors */
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.25);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.25);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.25);
+            --info: #3b82f6;
+
+            /* Fonts & Typography */
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            
+            /* Box Shadows & Glows */
+            --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --shadow-inset: inset 0 1px 1px rgba(255,255,255,0.1);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Basic Resets & Scrollbar Setup */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        button, input, select, textarea {
+            font-family: inherit;
+            color: inherit;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-sidebar);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ==========================================================================
+           2. PREMIUM LOGIN PANEL (SAC-INSPIRED)
+           ========================================================================== */
+        #login-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #0d1933 0%, #030712 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .login-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border);
+            padding: 3rem;
+            width: 100%;
+            max-width: 460px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glow), 0 0 40px rgba(0, 229, 255, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,229,255,0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .login-logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .login-logo span {
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            background: rgba(10, 15, 30, 0.8);
+            color: #ffffff;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background: rgba(10, 15, 30, 0.95);
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+            color: var(--text-muted);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me input {
+            accent-color: var(--primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .forgot-password:hover {
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 0.9rem 1.75rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-display);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #060913;
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ffffff;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-color: var(--primary);
+        }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT (SIDEBAR & HEADER)
+           ========================================================================== */
+        #app-layout {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .sidebar-brand {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text span {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 0.35rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.85rem 1.25rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .menu-link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .menu-link.active {
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.15) 0%, transparent 100%);
+            border-left: 3px solid var(--primary);
+            color: #ffffff;
+        }
+
+        .menu-link svg {
+            width: 20px;
+            height: 20px;
+            color: inherit;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-dark);
+            font-size: 0.8rem;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .top-navbar {
+            height: 75px;
+            background-color: rgba(6, 9, 19, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .page-title-area h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .role-badge {
+            background-color: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            color: var(--primary);
+            padding: 0.35rem 0.85rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: var(--font-display);
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .user-dropdown:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: var(--font-display);
+        }
+
+        .username {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Content Scroll Container */
+        .content-container {
+            padding: 2.5rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: radial-gradient(circle at 50% 0%, #0d1222 0%, #060913 100%);
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* ==========================================================================
+           4. GLASS CARD SYSTEM (SaaS / SAC LOOK AND FEEL)
+           ========================================================================== */
+        
+        /* Grids */
+        .grid-kpi {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-3col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* High-End Gradient KPI Cards */
+        .kpi-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 130px;
+            box-shadow: var(--shadow-glow);
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(0, 229, 255, 0.08);
+        }
+
+        .kpi-card.gradient-1 {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(6, 9, 19, 0.65) 100%);
+        }
+        .kpi-card.gradient-2 {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(6, 9, 19, 0.65) 100%);
+        }
+        .kpi-card.gradient-3 {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 9, 19, 0.65) 100%);
+        }
+
+        .kpi-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kpi-value {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0.5rem 0;
+            font-family: var(--font-display);
+        }
+
+        .kpi-meta {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kpi-meta.up {
+            color: var(--success);
+        }
+
+        .kpi-meta.down {
+            color: var(--danger);
+        }
+
+        .kpi-icon-wrapper {
+            position: absolute;
+            right: 1.25rem;
+            top: 1.25rem;
+            opacity: 0.25;
+            color: var(--text-muted);
+        }
+
+        /* Glass Panel Section */
+        .card {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .card-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Search / Filtering bars */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.02);
+            padding: 1.25rem 2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .filters-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select, .search-input {
+            padding: 0.6rem 1.25rem;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            outline: none;
+            background-color: rgba(10, 15, 30, 0.7);
+            color: #ffffff;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus, .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Diagnostic / Tables */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .table th {
+            background-color: rgba(255,255,255,0.02);
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 1rem 1.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .table td {
+            padding: 1.15rem 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            color: #ffffff;
+        }
+
+        .table tr:hover td {
+            background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            gap: 6px;
+            font-family: var(--font-display);
+        }
+
+        .status-pill.draft {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+
+        .status-pill.pending {
+            background-color: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning);
+        }
+
+        .status-pill.approved {
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .status-pill.rejected {
+            background-color: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        /* Pagination controls */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            padding: 0.45rem 1rem;
+            border: 1px solid var(--card-border);
+            background-color: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary);
+            color: #060913;
+            border-color: var(--primary);
+            font-weight: 700;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ==========================================================================
+           5. DATA VISUALIZATION (CHART.JS POWERED)
+           ========================================================================== */
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            background: transparent;
+            margin-top: 1rem;
+        }
+
+        .chart-container canvas {
+            position: absolute !important;
+            top: 0; left: 0;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            font-family: var(--font-display);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        /* Custom confidence score ring */
+        .confidence-circle {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto;
+        }
+
+        .confidence-circle svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .confidence-circle circle {
+            fill: none;
+            stroke-width: 10;
+        }
+
+        .confidence-circle .track {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .confidence-circle .fill {
+            stroke: var(--primary);
+            stroke-dasharray: 377;
+            stroke-dashoffset: 45; /* 88% confidence */
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 6px var(--primary-glow));
+        }
+
+        .confidence-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: var(--font-display);
+        }
+
+        .confidence-label .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .confidence-label .desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ==========================================================================
+           6. UPLOAD COMPONENT
+           ========================================================================== */
+        .upload-drag-area {
+            border: 2px dashed rgba(0, 229, 255, 0.3);
+            background-color: rgba(0, 229, 255, 0.02);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 2rem;
+        }
+
+        .upload-drag-area:hover, .upload-drag-area.drag-over {
+            background-color: rgba(0, 229, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+        }
+
+        .upload-icon {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .upload-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-display);
+        }
+
+        .upload-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .selected-file-info {
+            background: rgba(0, 229, 255, 0.05);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .upload-actions-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-progress-container {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .progress-bar-bg {
+            background-color: rgba(255, 255, 255, 0.05);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .upload-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 229, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: upload-spin 0.8s linear infinite;
+        }
+
+        @keyframes upload-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==========================================================================
+           7. MODALS
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: #0d1222;
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            background-color: rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: #ffffff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1.25rem 2rem;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            background-color: rgba(0,0,0,0.15);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Risk analysis items */
+        .risk-item {
+            display: flex;
+            gap: 14px;
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            border-left: 5px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+
+        .risk-item.high {
+            background-color: rgba(239, 68, 68, 0.08);
+            border-color: var(--danger);
+        }
+
+        .risk-item.medium {
+            background-color: rgba(245, 158, 11, 0.08);
+            border-color: var(--warning);
+        }
+
+        .risk-item.low {
+            background-color: rgba(14, 165, 233, 0.08);
+            border-color: var(--info);
+        }
+
+        .risk-header {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            font-family: var(--font-display);
+            color: #ffffff;
+        }
+
+        .risk-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Control & Command Buttons */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(0, 229, 255, 0.03);
+        }
+
+        .action-btn.delete:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.03);
+        }
+
+        /* Live status grid for monitoring */
+        .monitor-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .monitor-stat span:first-child {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .monitor-stat span:last-child {
+            color: #ffffff;
+            font-weight: 600;
+            font-family: var(--font-display);
+        }
+
+        .health-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .health-indicator.pulse {
+            animation: pulse-glow 1.5s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        /* Flex Utility classes */
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .flex-gap-1 {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* ==========================================================================
+           8. RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 1180px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-bottom: 1px solid var(--card-border);
+                border-right: none;
+            }
+            .sidebar-brand {
+                padding: 1.25rem 1.5rem;
+            }
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            .menu-item {
+                margin-bottom: 0;
+            }
+            .menu-link {
+                white-space: nowrap;
+                padding: 0.6rem 1rem;
+            }
+            .top-navbar {
+                padding: 0 1.5rem;
+                height: 65px;
+            }
+            .content-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================================
+       LOGIN VIEW PANEL (SAC/Oracle inspired)
+       ========================================================================== -->
+    <div id="login-view">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5">
+                    <path d="M3 3v18h18"/>
+                    <path d="m19 9-5 5-4-4-3 3"/>
+                </svg>
+                <span>SAP</span> FI Forecast
+            </div>
+            <div class="login-subtitle">Enterprise FI Forecasting Platform Login</div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="Enter username" required value="finance_analyst">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Enter password" required value="password">
+                </div>
+                
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" checked> Remember Me
+                    </label>
+                    <a href="#" class="forgot-password" onclick="alert('Password reset link dispatched via corporate SMTP server.')">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    Sign In to Portal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       MAIN APP LAYOUT
+       ========================================================================== -->
+    <div id="app-layout">
+        <div style="display: flex; width: 100%; height: 100%;">
+            
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <div class="sidebar-brand"> 
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5">
+                    </svg>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg" alt="SAP Logo" style="width: 70px; height: 70px;">
+                    <span class="brand-text"><span>SAP</span> FI Forecast</span>
+                </div>
+                
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link active" onclick="switchPanel('dashboard', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                            Executive Dashboard
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('analytics', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                            Forecast Analytics
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('upload', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            SAP Data Upload
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('management', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                            Forecast Management
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('workflow', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 11.08 22 12 12 22 2 12 12 2 22 12 22 11.08"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Approval Workflow
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('insights', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            AI Insights Center
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('users', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            User Management
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('audit', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Audit Logs
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link" onclick="switchPanel('settings', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Profile Settings
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-footer">
+                    <span>Enterprise Edition</span>
+                    <a href="#" style="color: inherit; text-decoration: none;" onclick="handleLogout()">Sign Out</a>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-wrapper">
+                
+                <!-- Top Navbar -->
+                <div class="top-navbar">
+                    <div class="page-title-area">
+                        <h1 id="view-subtitle">SAP Enterprise Forecasting AI Platform</h1>
+                        <h4 id="view-title">Executive Dashboard</h4>
+                    </div>
+                    
+                    <div class="navbar-actions">
+                        <div class="role-badge" id="user-role-badge">Finance Analyst</div>
+                        <div class="user-dropdown">
+                            <div class="avatar" id="avatar-initials">FA</div>
+                            <span class="username" id="display-username">finance_analyst</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Panels -->
+                <div class="content-container">
+
+                    <!-- ==========================================================
+                       1. EXECUTIVE DASHBOARD PANEL (Premium SaaS Glow Theme)
+                       ========================================================== -->
+                    <div id="panel-dashboard" class="panel active">
+                                 <!-- KPI Row -->
+                        <div class="grid-kpi">
+                            <div class="kpi-card gradient-1">
+                                <div>
+                                    <div class="kpi-title">YoY Revenue (FY26)</div>
+                                    <div class="kpi-value" id="kpi-revenue">€12.84M</div>
+                                </div>
+                                <div class="kpi-meta up">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                                    +5.4% vs Baseline
+                                </div>
+                                <div class="kpi-icon-wrapper">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                            
+                            <div class="kpi-card gradient-2">
+                                <div>
+                                    <div class="kpi-title">Forecast Accuracy (MAPE)</div>
+                                    <div class="kpi-value" id="kpi-accuracy">95.80%</div>
+                                </div>
+                                <div class="kpi-meta up">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                                    XGBoost Best Model
+                                </div>
+                                <div class="kpi-icon-wrapper">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="kpi-card gradient-3">
+                                <div>
+                                    <div class="kpi-title" id="kpi-expense-title">Simulated Cost Savings</div>
+                                    <div class="kpi-value" id="kpi-expense">€842.10k</div>
+                                </div>
+                                <div class="kpi-meta up">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                                    14.5% vs Q4 Target
+                                </div>
+                                <div class="kpi-icon-wrapper">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14v2"/><path d="M20 12H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16v-8Z"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="kpi-card">
+                                <div>
+                                    <div class="kpi-title">Data Quality Score</div>
+                                    <div class="kpi-value" id="kpi-dataquality">99.1%</div>
+                                </div>
+                                <div class="kpi-meta up">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                                    Validation Ingestion Pass
+                                </div>
+                                <div class="kpi-icon-wrapper">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Charts Row -->
+                        <div class="grid-2col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                                        Revenue Forecast Trend (Actual vs XGBoost Model)
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container" id="revenue-chart"><canvas id="revenue-chart-canvas"></canvas></div>
+                                    <div class="chart-legend">
+                                        <div class="legend-item"><div class="legend-color" style="background-color: var(--primary);"></div> Actual Baseline</div>
+                                        <div class="legend-item"><div class="legend-color" style="background-color: var(--secondary);"></div> Projections (XGBoost 12M)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnostic and Confidence ring section -->
+                            <div class="grid-2col" style="margin-bottom:0;">
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header">
+                                        <h2>Forecast Confidence</h2>
+                                    </div>
+                                    <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 250px;">
+                                        <div class="confidence-circle">
+                                            <svg viewBox="0 0 130 130">
+                                                <circle class="track" cx="65" cy="65" r="60"/>
+                                                <circle class="fill" cx="65" cy="65" r="60"/>
+                                            </svg>
+                                            <div class="confidence-label">
+                                                <div class="value" id="kpi-confidence-value">88.2%</div>
+                                                <div class="desc">Confidence</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                                            Parameter confidence variance (R² validation)
+                                        </div>
+                                    </div>
+                                </div>
+ 
+                                <div class="card" style="margin-bottom:0;">
+                                    <div class="card-header">
+                                        <h2>System Health Monitor</h2>
+                                    </div>
+                                    <div class="card-body" style="display: flex; flex-direction: column; gap: 0.85rem; justify-content: center; min-height: 250px;">
+                                        <div class="monitor-stat">
+                                            <span>Database Pool State</span>
+                                            <span>
+                                                <span class="health-indicator pulse" style="background-color: var(--success);"></span>
+                                                <span id="health-db-status">Active (12 / 20)</span>
+                                            </span>
+                                        </div>
+                                        <div class="monitor-stat">
+                                            <span>Engine Queue</span>
+                                            <span><span id="health-engine-status">Idle (0 pending)</span></span>
+                                        </div>
+                                        <div class="monitor-stat">
+                                            <span>Memory Resource Allocation</span>
+                                            <span><span id="health-memory-status">4.2 GB / 16.0 GB</span></span>
+                                        </div>
+                                        <div class="monitor-stat">
+                                            <span>Model Accuracy Drift</span>
+                                            <span>
+                                                <span id="health-drift-status" style="color: var(--success); font-weight: bold;">Normal</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GL Account Analysis & Distribution Row -->
+                        <div class="grid-2col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>GL Account Breakdown (YoY Absolute Values)</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container" id="breakdown-chart"><canvas id="breakdown-chart-canvas"></canvas></div>
+                                    <div class="chart-legend">
+                                        <div class="legend-item"><div class="legend-color" style="background-color: #0ea5e9;"></div> Rev (400k)</div>
+                                        <div class="legend-item"><div class="legend-color" style="background-color: #3b82f6;"></div> Salary (500k)</div>
+                                        <div class="legend-item"><div class="legend-color" style="background-color: #8b5cf6;"></div> Operations (600k)</div>
+                                        <div class="legend-item"><div class="legend-color" style="background-color: #f43f5e;"></div> Depr (700k)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Forecast Distribution Profile</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container" style="height: 240px;">
+                                        <svg class="density-chart" viewBox="0 0 400 120">
+                                            <defs>
+                                                <linearGradient id="density-grad" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stop-color="var(--secondary)" stop-opacity="0.3"/>
+                                                    <stop offset="100%" stop-color="var(--secondary)" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M 0 110 Q 100 20 200 40 T 400 110 L 400 120 L 0 120 Z" class="density-path" />
+                                            <line x1="200" y1="10" x2="200" y2="110" stroke="var(--primary)" stroke-dasharray="3 3" stroke-width="1.5" />
+                                            <text x="205" y="25" fill="var(--primary)" font-size="9" font-family="Space Grotesk">Median Project</text>
+                                            <text x="10" y="115" class="chart-axis-label">Low Deviation</text>
+                                            <text x="390" y="115" class="chart-axis-label" text-anchor="end">High Variance</text>
+                                        </svg>
+                                    </div>
+                                    <div style="text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+                                        Probability density distribution calculated over 5,000 model runs
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Ingestion / Activity Summary -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Recent Forecast Engine Job Runs</h2>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Run ID</th>
+                                            <th>Version</th>
+                                            <th>Model Type</th>
+                                            <th>Metrics (MAPE)</th>
+                                            <th>Workflow Status</th>
+                                            <th>User Access</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-runs-tbody">
+                                        <!-- Will be rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div><!-- END panel-dashboard -->
+
+                    <!-- ==========================================================
+                       2. FORECAST ANALYTICS PANEL
+                       ========================================================== -->
+                    <div id="panel-analytics" class="panel">
+                        <div class="filter-bar">
+                            <div class="filters-group">
+                                <select class="filter-select" id="analytics-filter-model" onchange="onAnalyticsFilterChange()">
+                                    <option value="XGBoost">XGBoost (Regressor)</option>
+                                    <option value="ARIMA">ARIMA</option>
+                                    <option value="ETS">ETS (Holt-Winters)</option>
+                                    <option value="RandomForest">Random Forest</option>
+                                </select>
+                                <select class="filter-select" id="analytics-filter-period" onchange="onAnalyticsFilterChange()">
+                                    <option value="12">Next 12 Periods</option>
+                                    <option value="24">Next 24 Periods</option>
+                                    <option value="6">Next 6 Periods</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <!-- Live run status badge -->
+                                <div id="analytics-run-status" style="display:none;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--text-muted);">
+                                    <span id="analytics-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--primary);display:inline-block;animation:pulse-dot 1s infinite;"></span>
+                                    <span id="analytics-status-text">Running model…</span>
+                                </div>
+                                <button class="btn btn-primary" id="btn-export-analytics" style="width:auto;" onclick="exportForecastCSV()">Export Forecast Dataset</button>
+                            </div>
+                        </div>
+
+                        <!-- Live Metric Cards -->
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.25rem;">
+                            <div class="card" style="padding:1rem 1.25rem;text-align:center;">
+                                <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;">MAE</div>
+                                <div id="analytics-mae-value" style="font-size:1.45rem;font-weight:700;color:var(--primary);letter-spacing:-0.5px;">N/A</div>
+                                <div style="font-size:0.7rem;color:var(--text-dark);margin-top:0.2rem;">Mean Absolute Error</div>
+                            </div>
+                            <div class="card" style="padding:1rem 1.25rem;text-align:center;">
+                                <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;">RMSE</div>
+                                <div id="analytics-rmse-value" style="font-size:1.45rem;font-weight:700;color:var(--secondary);letter-spacing:-0.5px;">N/A</div>
+                                <div style="font-size:0.7rem;color:var(--text-dark);margin-top:0.2rem;">Root Mean Sq Error</div>
+                            </div>
+                            <div class="card" style="padding:1rem 1.25rem;text-align:center;">
+                                <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;">MAPE</div>
+                                <div id="analytics-mape-value" style="font-size:1.45rem;font-weight:700;color:var(--warning);letter-spacing:-0.5px;">N/A</div>
+                                <div style="font-size:0.7rem;color:var(--text-dark);margin-top:0.2rem;">Mean Abs % Error</div>
+                            </div>
+                            <div class="card" style="padding:1rem 1.25rem;text-align:center;">
+                                <div style="font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.35rem;">R² Score</div>
+                                <div id="analytics-r2-value" style="font-size:1.45rem;font-weight:700;color:var(--success);letter-spacing:-0.5px;">N/A</div>
+                                <div style="font-size:0.7rem;color:var(--text-dark);margin-top:0.2rem;">Coefficient of Det.</div>
+                            </div>
+                        </div>
+
+                        <div class="grid-2col">
+                            <div class="card">
+                                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+                                    <h2 id="analytics-chart-title">Operational Cost Forecast</h2>
+                                    <span id="analytics-model-badge" style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:20px;background:rgba(139,92,246,0.15);color:#a78bfa;font-weight:600;border:1px solid rgba(139,92,246,0.3);">XGBoost</span>
+                                </div>
+                                <div class="card-body" style="position:relative;">
+                                    <!-- Loading overlay -->
+                                    <div id="analytics-chart-overlay" style="display:none;position:absolute;inset:0;background:rgba(6,9,19,0.75);z-index:10;border-radius:12px;align-items:center;justify-content:center;flex-direction:column;gap:0.75rem;">
+                                        <div style="width:36px;height:36px;border:3px solid rgba(0,229,255,0.15);border-top-color:var(--primary);border-radius:50%;animation:spin-anim 0.8s linear infinite;"></div>
+                                        <span style="font-size:0.8rem;color:var(--text-muted);" id="analytics-overlay-text">Running model…</span>
+                                    </div>
+                                    <div class="chart-container" id="expense-forecast-chart"><canvas id="expense-forecast-chart-canvas"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Forecast Comparison Table (Hold-out Test Accuracy)</h2>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Model Name</th>
+                                                <th>MAE</th>
+                                                <th>RMSE</th>
+                                                <th>MAPE (%)</th>
+                                                <th>R² Score</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="forecast-comparison-tbody">
+                                            <tr>
+                                                <td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">
+                                                    <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                                                        <div style="width:14px;height:14px;border:2px solid rgba(0,229,255,0.2);border-top-color:var(--primary);border-radius:50%;animation:spin-anim 0.8s linear infinite;"></div>
+                                                        Loading comparison data…
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- ==========================================================
+                       3. SAP DATA UPLOAD PANEL
+                       ========================================================== -->
+                    <div id="panel-upload" class="panel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Upload SAP FI / CO-PA Data</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="upload-drag-area" id="upload-drag-drop-area" onclick="triggerFileSelect()">
+                                    <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <div class="upload-title">Drag & Drop SAP General Ledger Files Here</div>
+                                    <div class="upload-subtitle">Supports CSV or XLSX exported directly from SAP FI (Transaction FBL3N) or CO-PA</div>
+                                    <input type="file" id="hidden-file-input" style="display: none;" accept=".csv, .xlsx" onchange="handleFileSelect(event)">
+                                </div>
+
+                                <div id="selected-file-display" style="display: none; max-width: 500px; margin: 0 auto 1.5rem;" class="selected-file-info">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14 2 14 8 20 8"/>
+                                        </svg>
+                                        <div>
+                                            <div id="selected-filename-text" style="font-weight: 600; color: #ffffff; font-size: 0.95rem;">filename.csv</div>
+                                            <div id="selected-filesize-text" style="font-size: 0.8rem; color: var(--text-muted);">0 KB</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="action-btn delete" title="Remove file" onclick="clearSelectedFile(event)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+
+                                <div class="upload-actions-group" style="max-width: 500px; margin: 0 auto 1.5rem;">
+                                    <button type="button" class="btn btn-outline" style="width: auto;" id="btn-browse-file" onclick="triggerFileSelect()">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                                        Browse File
+                                    </button>
+                                    <button type="button" class="btn btn-primary" style="width: auto;" id="btn-upload-dataset" onclick="executeUpload()" disabled>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload Dataset
+                                    </button>
+                                </div>
+
+                                <div class="form-group" style="max-width: 300px; margin: 0 auto 2rem;">
+                                    <label for="sap-upload-type">Ingestion Pipeline Target</label>
+                                    <select class="form-control" id="sap-upload-type">
+                                        <option value="SAP FI">SAP FI (General Ledger Data)</option>
+                                        <option value="SAP COPA">SAP CO-PA (Profitability Analysis)</option>
+                                    </select>
+                                </div>
+
+                                <div class="upload-progress-container" id="upload-progress-area">
+                                    <div class="flex-between">
+                                        <span id="uploading-file-name" style="font-weight: 500;">document.csv</span>
+                                        <span id="upload-percentage" style="color: var(--primary); font-weight: 600;">0%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" id="upload-progress-bar"></div>
+                                    </div>
+                                    <div id="upload-processing-status" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                        <span class="upload-spinner" id="upload-spinner-icon" style="display: none;"></span>
+                                        <span id="upload-status-text">Uploading to backend...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Ingestion Batches -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Ingestion Batch History</h2>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Batch ID</th>
+                                            <th>Filename</th>
+                                            <th>Uploaded By</th>
+                                            <th>Source Type</th>
+                                            <th>Status</th>
+                                            <th>Records Ingested</th>
+                                            <th>Errors Detected</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="upload-batches-tbody">
+                                        <!-- Will render dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       4. FORECAST MANAGEMENT PANEL
+                       ========================================================== -->
+                    <div id="panel-management" class="panel">
+                        <div class="grid-2col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Create New Forecast Run</h2>
+                                </div>
+                                <div class="card-body">
+                                    <form onsubmit="handleCreateForecast(event)">
+                                        <div class="form-group">
+                                            <label for="forecast-schedule">Forecast Frequency / Schedule</label>
+                                            <select class="form-control" id="forecast-schedule">
+                                                <option value="Monthly Forecast">Monthly Forecast (12 Months Ahead)</option>
+                                                <option value="Quarterly Forecast">Quarterly Forecast (24 Months Ahead)</option>
+                                                <option value="Weekly Forecast">Weekly Forecast (6 Weeks Ahead)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="forecast-horizon">Prediction Horizon (Months)</label>
+                                            <input type="number" id="forecast-horizon" class="form-control" value="12" min="1" max="36">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="forecast-filters">G/L Account Filter (Optional)</label>
+                                            <select class="form-control" id="forecast-filters">
+                                                <option value="all">All G/L Accounts (Consolidated)</option>
+                                                <option value="400000">400000 - Gross Revenue</option>
+                                                <option value="500000">500000 - Salary Expenses</option>
+                                                <option value="600000">600000 - General Operating Expense</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Select Machine Learning Models to Evaluate</label>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                                                <label style="display: flex; gap: 8px; font-size: 0.85rem;"><input type="checkbox" checked disabled> ARIMA Model</label>
+                                                <label style="display: flex; gap: 8px; font-size: 0.85rem;"><input type="checkbox" checked disabled> ETS Model</label>
+                                                <label style="display: flex; gap: 8px; font-size: 0.85rem;"><input type="checkbox" checked disabled> Random Forest</label>
+                                                <label style="display: flex; gap: 8px; font-size: 0.85rem;"><input type="checkbox" checked disabled> XGBoost Regressor</label>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary" id="btn-run-forecast">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>
+                                            </svg>
+                                            Run ML Forecast Engines
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>System Task Status</h2>
+                                </div>
+                                <div class="card-body" style="display: flex; flex-direction: column; gap: 1rem;" id="task-status-container">
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.9rem;">Job ID #342: XGBoost Run</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);">Initiated by finance_analyst</div>
+                                        </div>
+                                        <span class="status-pill approved">Completed</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 0.9rem;">Job ID #341: Data Ingestion Validation</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);">Initiated by system</div>
+                                        </div>
+                                        <span class="status-pill approved">Completed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Forecast Versions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Forecast Versions & Tracked Runs</h2>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Run ID</th>
+                                            <th>Version</th>
+                                            <th>Model Name</th>
+                                            <th>Type</th>
+                                            <th>Accuracy (MAPE)</th>
+                                            <th>Workflow Status</th>
+                                            <th>Created By</th>
+                                            <th>Approved By</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="forecast-runs-tbody">
+                                        <!-- Will render dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       5. FORECAST APPROVAL WORKFLOW PANEL
+                       ========================================================== -->
+                    <div id="panel-workflow" class="panel">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Active Approval Workflow Queue</h2>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Run ID</th>
+                                            <th>Version</th>
+                                            <th>Model Name</th>
+                                            <th>Forecast Horizon</th>
+                                            <th>Creator</th>
+                                            <th>Status</th>
+                                            <th>Review Comments</th>
+                                            <th>Review Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="workflow-tbody">
+                                        <!-- Rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       6. AI INSIGHTS CENTER PANEL
+                       ========================================================== -->
+                    <div id="panel-insights" class="panel">
+                        <div class="grid-2col">
+                            
+                            <!-- Gemini Analysis -->
+                            <div class="card" style="border-top: 4px solid var(--primary);">
+                                <div class="card-header">
+                                    <h2>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                                            <path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                        </svg>
+                                        Gemini Advanced Controller Analysis
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <p style="margin-bottom: 1rem; line-height: 1.5; font-size: 0.9rem;">
+                                        Based on the <strong>XGBoost Best Model</strong> projection for FY26, Gemini detects a noticeable 4.5% uptick in seasonal revenue targets starting in Q3. This correlates with post-holiday fiscal adjustments in SAP CO-PA data.
+                                    </p>
+                                    <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary);">Variance Explanations</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                                        The low variance in operational expenses indicates that our rolling budget caps are proving effective. However, we predict a slight over-allocation risk in <em>Personnel Expenses (GL-500000)</em> due to scheduled seasonal hiring curves.
+                                    </p>
+                                    <button class="btn btn-secondary" style="width: auto;" onclick="alert('Exporting Gemini report...')">Export Gemini Report</button>
+                                </div>
+                            </div>
+
+                            <!-- OpenAI Analysis -->
+                            <div class="card" style="border-top: 4px solid var(--secondary);">
+                                <div class="card-header">
+                                    <h2>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2">
+                                            <path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                        </svg>
+                                        OpenAI GPT-4o Risk Detection Summary
+                                    </h2>
+                                </div>
+                                <div class="card-body">
+                                    <p style="margin-bottom: 1rem; line-height: 1.5; font-size: 0.9rem;">
+                                        OpenAI GPT-4o analysis has evaluated the forecast against previous year SAP records. R² validation indicates an 89% confidence level on the baseline revenue line, warning of minor cashflow dips in Month 5.
+                                    </p>
+                                    <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--secondary);">Model Constraints</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                                        We advise deploying the ARIMA parameters for short-term treasury metrics, while reserving XGBoost for long-term strategic budget adjustments. Keep MAPE monitors active for values exceeding 15%.
+                                    </p>
+                                    <button class="btn btn-secondary" style="width: auto; background-color: rgba(139, 92, 246, 0.15); color: #ffffff; border-color: rgba(139, 92, 246, 0.3);" onclick="alert('Exporting OpenAI report...')">Export GPT-4o Report</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Detection & Recommendations -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Identified Risks & Recommendations</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="risk-item high">
+                                    <div style="font-weight: bold; font-size: 1.25rem; color: var(--danger);">!</div>
+                                    <div>
+                                        <div class="risk-header">High Risk: Revenue Projection Exceeds H1 Capacity Target</div>
+                                        <div class="risk-desc">The XGBoost model forecasts H1 revenue exceeding capacity caps by 8.5%. Recommendation: Adjust production capacity settings inside SAP CO-PA to ensure realistic execution models.</div>
+                                    </div>
+                                </div>
+
+                                <div class="risk-item medium">
+                                    <div style="font-weight: bold; font-size: 1.25rem; color: var(--warning);">!</div>
+                                    <div>
+                                        <div class="risk-header">Medium Risk: Outliers in Ingested SAP FI Batches</div>
+                                        <div class="risk-desc">Batch #Ingest-43 contains 14 outlier payments in G/L Account 600000. Recommendation: Run validation rules to isolate duplicate entries.</div>
+                                    </div>
+                                </div>
+
+                                <div class="risk-item low">
+                                    <div style="font-weight: bold; font-size: 1.25rem; color: var(--info);">i</div>
+                                    <div>
+                                        <div class="risk-header">Low Risk: Seasonal Lag Impact in December Trend</div>
+                                        <div class="risk-desc">ARIMA projections show a seasonal lag factor. Recommendation: Verify rolling average settings using 3-month lagging filters.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       7. USER MANAGEMENT PANEL
+                       ========================================================== -->
+                    <div id="panel-users" class="panel">
+                        <div class="filter-bar">
+                            <h2>User Accounts & Security Roles</h2>
+                            <button class="btn btn-primary" style="width: auto;" onclick="openAddUserModal()">Create User Account</button>
+                        </div>
+
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Username</th>
+                                            <th>Email Address</th>
+                                            <th>Security Role</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-tbody">
+                                        <!-- Rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       8. AUDIT LOGS PANEL
+                       ========================================================== -->
+                    <div id="panel-audit" class="panel">
+                        <div class="filter-bar">
+                            <div class="filters-group">
+                                <input type="text" class="search-input" id="audit-search" placeholder="Search logs..." oninput="handleAuditSearch()">
+                                <select class="filter-select" id="audit-filter-action" onchange="handleAuditSearch()">
+                                    <option value="all">All Actions</option>
+                                    <option value="LOGIN">User Logins</option>
+                                    <option value="UPLOAD">SAP Ingestion</option>
+                                    <option value="FORECAST">Forecast Runs</option>
+                                    <option value="APPROVAL">Workflow Actions</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-outline" style="width: auto;" onclick="clearLogsSimulation()">Clear Simulation Logs</button>
+                        </div>
+
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Log ID</th>
+                                            <th>User</th>
+                                            <th>Action Event</th>
+                                            <th>IP Address</th>
+                                            <th>Timestamp</th>
+                                            <th>JSON Context Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="audit-tbody">
+                                        <!-- Rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==========================================================
+                       9. PROFILE SETTINGS PANEL
+                       ========================================================== -->
+                    <div id="panel-settings" class="panel">
+                        <div class="grid-2col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Security & Profile Options</h2>
+                                </div>
+                                <div class="card-body">
+                                    <form onsubmit="handleSaveProfile(event)">
+                                        <div class="form-group">
+                                            <label for="settings-username">Username</label>
+                                            <input type="text" id="settings-username" class="form-control" value="finance_analyst">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-email">Email Address</label>
+                                            <input type="email" id="settings-email" class="form-control" value="finance_analyst@company.com">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-pass-old">Old Password</label>
+                                            <input type="password" id="settings-pass-old" class="form-control" placeholder="••••••••">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="settings-pass-new">New Password</label>
+                                            <input type="password" id="settings-pass-new" class="form-control" placeholder="Enter new password">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Update Profile Settings</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>System Notification Routing</h2>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label style="display: flex; gap: 10px; font-weight: 500; margin-bottom: 1rem;">
+                                            <input type="checkbox" checked> Send Forecast complete notifications via Email
+                                        </label>
+                                        <label style="display: flex; gap: 10px; font-weight: 500; margin-bottom: 1rem;">
+                                            <input type="checkbox" checked> Require double approval loops for High Risk variance runs
+                                        </label>
+                                        <label style="display: flex; gap: 10px; font-weight: 500; margin-bottom: 1rem;">
+                                            <input type="checkbox"> Push log notifications to security auditing webhook
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-secondary" onclick="alert('Notification routes updated successfully.')">Save Preferences</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       USER MANAGEMENT MODAL
+       ========================================================================== -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="user-modal-title">Create User Account</h3>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <form onsubmit="handleSaveUser(event)">
+                <input type="hidden" id="user-modal-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="modal-user-username">Username</label>
+                        <input type="text" id="modal-user-username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-user-email">Email Address</label>
+                        <input type="email" id="modal-user-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-user-role">Security Role</label>
+                        <select id="modal-user-role" class="form-control">
+                            <option value="Admin">Admin</option>
+                            <option value="Finance Manager">Finance Manager</option>
+                            <option value="Analyst">Analyst</option>
+                            <option value="Viewer">Viewer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" style="width: auto;" onclick="closeUserModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;">Save User Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       9. JAVASCRIPT STATE CONTROLLER & SIMULATOR
+       ========================================================================== -->
+    <script>
+        /* ==========================================================================
+           ENTERPRISE SAP FI FORECASTING PLATFORM — DYNAMIC FRONTEND ENGINE
+           Version: 4.0 | JWT Auth | REST API | Chart.js | Stale-While-Revalidate
+           ========================================================================== */
+
+        /* ── 0. CONFIGURATION ──────────────────────────────────────────────────── */
+        const API_BASE = 'http://127.0.0.1:8000';
+
+        /* Chart.js instances – reused across renders, never destroyed/recreated */
+        const chartInstances = {};
+
+        /* In-flight deduplication: prevents duplicate concurrent fetches */
+        const inFlight = {};
+
+        /* ── 1. TOKEN MANAGEMENT ────────────────────────────────────────────────── */
+        const Auth = {
+            getAccess:  () => sessionStorage.getItem('sap_access_token'),
+            getRefresh: () => localStorage.getItem('sap_refresh_token'),
+            save(access, refresh) {
+                sessionStorage.setItem('sap_access_token', access);
+                if (refresh) localStorage.setItem('sap_refresh_token', refresh);
+            },
+            clear() {
+                sessionStorage.removeItem('sap_access_token');
+                localStorage.removeItem('sap_refresh_token');
+                localStorage.removeItem('sap_user');
+            },
+            parseJWT(token) {
+                try {
+                    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                    return JSON.parse(atob(b64));
+                } catch { return null; }
+            },
+            isExpired(token) {
+                const p = this.parseJWT(token);
+                if (!p || !p.exp) return true;
+                return (Date.now() / 1000) > p.exp - 30;
+            }
+        };
+
+        /* ── 2. API FETCH WRAPPER (with deduplication) ──────────────────────────── */
+        async function apiFetch(path, options = {}) {
+            // Only deduplicate idempotent GET requests
+            const isGet = !options.method || options.method === 'GET';
+            const dedupKey = isGet ? path : null;
+
+            if (dedupKey && inFlight[dedupKey]) {
+                return inFlight[dedupKey];
+            }
+
+            let token = Auth.getAccess();
+
+            if (token && Auth.isExpired(token)) {
+                const refreshToken = Auth.getRefresh();
+                if (refreshToken) {
+                    try {
+                        const rRes = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ refresh_token: refreshToken })
+                        });
+                        if (rRes.ok) {
+                            const rData = await rRes.json();
+                            Auth.save(rData.access_token, rData.refresh_token || refreshToken);
+                            token = rData.access_token;
+                        } else { handleSessionExpired(); return null; }
+                    } catch { handleSessionExpired(); return null; }
+                } else { handleSessionExpired(); return null; }
+            }
+
+            const headers = { ...(options.headers || {}) };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const fetchPromise = (async () => {
+                try {
+                    const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+                    if (res.status === 401) { handleSessionExpired(); return null; }
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({ detail: res.statusText }));
+                        console.error(`API Error [${res.status}] ${path}:`, err);
+                        if (options.throwOnError) {
+                            throw new Error(err.detail || `Server error [${res.status}]`);
+                        }
+                        return null;
+                    }
+                    if (res.status === 204) return true;
+                    return await res.json();
+                } catch (e) {
+                    console.error(`Network error on ${path}:`, e);
+                    if (options.throwOnError) throw e;
+                    return null;
+                } finally {
+                    if (dedupKey) delete inFlight[dedupKey];
+                }
+            })();
+
+            if (dedupKey) inFlight[dedupKey] = fetchPromise;
+            return fetchPromise;
+        }
+
+        function handleSessionExpired() {
+            Auth.clear();
+            document.getElementById('app-layout').style.display = 'none';
+            const lv = document.getElementById('login-view');
+            lv.style.display = 'flex';
+            lv.style.opacity = '1';
+            showToast('Session expired. Please log in again.', 'warning');
+        }
+
+        /* ── 3. TOAST NOTIFICATION SYSTEM ──────────────────────────────────────── */
+        function showToast(message, type = 'info') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = `
+                    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+                    display: flex; flex-direction: column; gap: 0.5rem; max-width: 360px;
+                `;
+                document.body.appendChild(container);
+            }
+            const colors = { info: '#0ea5e9', success: '#10b981', warning: '#f59e0b', error: '#ef4444' };
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                background: rgba(15,23,42,0.97); border: 1px solid ${colors[type] || colors.info};
+                color: #f1f5f9; padding: 0.75rem 1rem; border-radius: 10px;
+                font-size: 0.85rem; font-family: 'Space Grotesk', sans-serif;
+                box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+                animation: slideInRight 0.3s ease; border-left: 4px solid ${colors[type] || colors.info};
+            `;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 4000);
+        }
+
+        /* ── 4. SKELETON LOADER HELPERS ─────────────────────────────────────────── */
+        function skeletonRows(cols, rows = 3) {
+            return Array.from({ length: rows }, () =>
+                `<tr>${Array.from({ length: cols }, () =>
+                    `<td><div style="height:14px;background:linear-gradient(90deg,rgba(255,255,255,0.05) 25%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.05) 75%);border-radius:6px;animation:shimmer 1.5s infinite;background-size:200% 100%;"></div></td>`
+                ).join('')}</tr>`
+            ).join('');
+        }
+
+        /* ── 5. APPLICATION STATE ───────────────────────────────────────────────── */
+        let state = {
+            currentUser: { username: 'finance_analyst', email: 'finance_analyst@company.com', role: 'Analyst' },
+            users: [],
+            batches: [],
+            forecastRuns: [],
+            auditLogs: [],
+            financialSeries: {
+                months: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul(F)','Aug(F)','Sep(F)','Oct(F)','Nov(F)','Dec(F)'],
+                actuals:   [8.5, 8.8, 9.2, 8.9, 9.5, 10.4, 9.1, 9.3, 9.8, 9.6, 10.1, 10.8],
+                forecasts: [null,null,null,null,null,null,null,null,null,null,null,10.8,11.2,11.4,11.8,11.6,12.1,12.8]
+            }
+        };
+
+        /* ── 6. INITIALIZATION ───────────────────────────────────────────────────── */
+        function injectShimmerKeyframes() {
+            if (document.getElementById('shimmer-style')) return;
+            const s = document.createElement('style');
+            s.id = 'shimmer-style';
+            s.textContent = `
+                @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+                @keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+                @keyframes spin-anim{to{transform:rotate(360deg)}}
+                @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.75)}}
+                @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+            `;
+            document.head.appendChild(s);
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            injectShimmerKeyframes();
+            setupDragAndDrop();
+            Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+            Chart.defaults.color = 'rgba(148,163,184,0.8)';
+
+            const savedUser = localStorage.getItem('sap_user');
+            const token = Auth.getAccess() || Auth.getRefresh();
+            if (savedUser && token) {
+                state.currentUser = JSON.parse(savedUser);
+                applyUserRoleUI();
+                document.getElementById('login-view').style.display = 'none';
+                document.getElementById('app-layout').style.display = 'block';
+                await fetchDashboardData();
+                await fetchSupportingData();
+            }
+        });
+
+        /* ── 7. LOGIN / LOGOUT ──────────────────────────────────────────────────── */
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const btn = event.target.querySelector('button[type=submit]');
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = '<span style="opacity:.7">Authenticating…</span>';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (!res.ok) {
+                    const e = await res.json().catch(() => ({}));
+                    showToast(e.detail || 'Invalid credentials. Try username: finance_analyst, password: password', 'error');
+                    btn.innerHTML = origHTML; btn.disabled = false; return;
+                }
+                const data = await res.json();
+                Auth.save(data.access_token, data.refresh_token);
+                const payload = Auth.parseJWT(data.access_token) || {};
+                const userRole = payload.role || 'analyst';
+                const roleMap = { admin: 'Admin', finance_manager: 'Finance Manager', analyst: 'Analyst', viewer: 'Viewer' };
+                const displayRole = roleMap[userRole] || userRole;
+                state.currentUser = { username, email: `${username}@company.com`, role: displayRole };
+                localStorage.setItem('sap_user', JSON.stringify(state.currentUser));
+                applyUserRoleUI();
+                showToast(`Welcome back, ${username}!`, 'success');
+                document.getElementById('login-view').style.opacity = '0';
+                setTimeout(async () => {
+                    document.getElementById('login-view').style.display = 'none';
+                    document.getElementById('app-layout').style.display = 'block';
+                    await fetchDashboardData();
+                    await fetchSupportingData();
+                }, 250);
+            } catch (err) {
+                console.error('Login error:', err);
+                showToast('Network error. Make sure backend is running on port 8000.', 'error');
+            }
+            btn.innerHTML = origHTML; btn.disabled = false;
+        }
+
+        function handleLogout() {
+            Auth.clear();
+            // Destroy all chart instances to free memory
+            Object.values(chartInstances).forEach(c => { try { c.destroy(); } catch {} });
+            Object.keys(chartInstances).forEach(k => delete chartInstances[k]);
+            document.getElementById('app-layout').style.display = 'none';
+            const lv = document.getElementById('login-view');
+            lv.style.display = 'flex'; lv.style.opacity = '1';
+            showToast('Logged out successfully.', 'info');
+        }
+
+        function applyUserRoleUI() {
+            document.getElementById('display-username').innerText = state.currentUser.username;
+            document.getElementById('user-role-badge').innerText = state.currentUser.role;
+            const initials = state.currentUser.username.split('_').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('avatar-initials').innerText = initials || 'US';
+            const su = document.getElementById('settings-username');
+            const se = document.getElementById('settings-email');
+            if (su) su.value = state.currentUser.username;
+            if (se) se.value = state.currentUser.email;
+        }
+
+        function switchPanel(panelId, element) {
+            document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+            element.classList.add('active');
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`panel-${panelId}`).classList.add('active');
+            const titles = {
+                'dashboard':'Executive Dashboard','analytics':'Forecast Analytics',
+                'upload':'SAP Data Ingestion','management':'Forecast Runs & Models',
+                'workflow':'Approval Workflows','insights':'AI Insights Center',
+                'users':'User Management & Security','audit':'Audit Logs',
+                'settings':'Profile & Notification Settings'
+            };
+            document.getElementById('view-title').innerText = titles[panelId] || 'Panel';
+
+            // Lazy-load data per panel — no skeleton overwrites if data already present
+            if (panelId === 'dashboard') {
+                renderCharts(); // charts need resize on panel-show
+                fetchDashboardData();
+            }
+            if (panelId === 'analytics') { renderCharts(); loadForecastAnalytics(); }
+            if (panelId === 'users')      loadUsers();
+            if (panelId === 'audit')      loadAuditLogs();
+            if (panelId === 'workflow')   loadApprovalList();
+            if (panelId === 'management') loadForecastList();
+            if (panelId === 'insights')   loadLLMInsights();
+            if (panelId === 'upload')     loadBatches();
+        }
+
+        /* ── 8. DATA FETCHERS ───────────────────────────────────────────────────── */
+
+        /** Fetches KPIs and system health — only updates changed DOM nodes */
+        async function fetchDashboardData() {
+            await Promise.allSettled([
+                loadDashboardKPIs(),
+                loadSystemHealth(),
+                loadForecastSummary(),
+                loadForecastList()
+            ]);
+            renderCharts();
+        }
+
+        /** Fetches supporting panel data in the background after login */
+        async function fetchSupportingData() {
+            await Promise.allSettled([
+                loadBatches(),
+                loadAuditLogs(),
+                loadApprovalList()
+            ]);
+        }
+
+        /* ── 9. DASHBOARD KPI LOADER ────────────────────────────────────────────── */
+        async function loadDashboardKPIs() {
+            const data = await apiFetch('/api/dashboard/kpis');
+            if (!data) return;
+            const fmt = (n) => {
+                if (Math.abs(n) >= 1e6) return `€${(n/1e6).toFixed(2)}M`;
+                if (Math.abs(n) >= 1e3) return `€${(n/1e3).toFixed(1)}K`;
+                return `€${n.toFixed(0)}`;
+            };
+            const set = (id, val) => { const el = document.getElementById(id); if (el && el.innerText !== String(val)) el.innerText = val; };
+            set('kpi-revenue',     fmt(data.revenue_kpi   ?? 12500000));
+            set('kpi-expense',     fmt(data.expense_kpi   ?? 4200000));
+            set('kpi-accuracy',    data.forecast_accuracy    ?? '95.80%');
+            set('kpi-dataquality', data.data_quality_score   ?? '98.50%');
+            set('kpi-confidence-value', (data.forecast_confidence ?? 'High (92%)').replace(/[^0-9%]/g, '').replace('%','') + '%');
+        }
+
+        /* ── 10. SYSTEM HEALTH LOADER ───────────────────────────────────────────── */
+        async function loadSystemHealth() {
+            const data = await apiFetch('/api/dashboard/system-health');
+            if (!data) return;
+            const set = (id, val) => { const el = document.getElementById(id); if (el && el.innerText !== String(val)) el.innerText = val; };
+            set('health-db-status',     data.database_connectivity ?? 'Connected');
+            set('health-engine-status', data.services?.forecasting_engine ?? 'Active');
+            set('health-memory-status', data.memory_usage ?? '—');
+            set('health-drift-status',  'Normal');
+        }
+
+        /* ── 11. FORECAST SUMMARY LOADER ────────────────────────────────────────── */
+        async function loadForecastSummary() {
+            const data = await apiFetch('/api/dashboard/forecast-summary');
+            if (!data) return;
+            const set = (id, val) => { const el = document.getElementById(id); if (el && el.innerText !== String(val)) el.innerText = val; };
+            set('summary-total-runs',    data.total_runs    ?? 0);
+            set('summary-draft-runs',    data.draft_runs    ?? 0);
+            set('summary-pending-runs',  data.pending_approval ?? 0);
+            set('summary-approved-runs', data.approved_runs ?? 0);
+            set('summary-best-model',    data.best_model_overall  ?? 'XGBoost');
+            set('summary-best-acc',      data.best_model_accuracy ?? 'N/A');
+            set('summary-best-mape',     data.best_model_mape     ?? 'N/A');
+        }
+
+        /* ── 12. FORECAST LIST LOADER ───────────────────────────────────────────── */
+        async function loadForecastList() {
+            const runs = await apiFetch('/api/forecast/list');
+            if (!runs) return;
+
+            const normalize = (r) => ({
+                id: r.id,
+                version: r.version,
+                model: r.model_name,
+                type: r.schedule_type,
+                accuracy: r.metrics?.MAPE != null ? `${(100-r.metrics.MAPE).toFixed(2)}%` : (r.metrics?.accuracy ?? 'N/A'),
+                status: r.status,
+                creator: r.created_by ?? '—',
+                approver: r.approved_by ?? '—'
+            });
+
+            const newRuns = runs.map(normalize);
+            // Only re-render if data changed
+            if (JSON.stringify(newRuns) !== JSON.stringify(state.forecastRuns)) {
+                state.forecastRuns = newRuns;
+                renderForecastRuns();
+            }
+        }
+
+        /* ── 13. BATCHES LOADER ─────────────────────────────────────────────────── */
+        async function loadBatches() {
+            const batches = await apiFetch('/api/v1/batches');
+            if (batches && Array.isArray(batches) && batches.length > 0) {
+                const newBatches = batches.map(b => ({
+                    id: `Batch-${b.id}`,
+                    filename: b.filename,
+                    uploadedBy: b.uploaded_by ?? '—',
+                    type: 'SAP FI',
+                    records: b.record_count ?? 0,
+                    errors: b.error_count ?? (b.status === 'Failed' ? 1 : 0),
+                    errorMsg: b.error_message || (b.validation_errors?.error_message || b.validation_errors?.parsing_error || b.validation_errors?.system_error || null),
+                    status: b.status ?? 'Completed',
+                    time: b.created_at ? new Date(b.created_at).toLocaleString() : '—'
+                }));
+                if (JSON.stringify(newBatches) !== JSON.stringify(state.batches)) {
+                    state.batches = newBatches;
+                    renderBatches();
+                }
+                return;
+            }
+            // Fallback from audit logs
+            const logs = await apiFetch('/api/audit/logs');
+            if (!logs) { renderBatches(); return; }
+            const ingestLogs = logs.filter(l => l.action && (l.action.includes('INGEST') || l.action.includes('UPLOAD')));
+            if (ingestLogs.length > 0) {
+                const newBatches = ingestLogs.map((l, i) => {
+                    let det = {}; try { det = JSON.parse(l.details); } catch {}
+                    return { id: `Batch-${l.id}`, filename: det.filename ?? `file_${i}.csv`, uploadedBy: l.user, type: 'SAP FI', records: det.records ?? 0, errors: det.errors ?? 0, status: 'Completed', time: l.time };
+                });
+                if (JSON.stringify(newBatches) !== JSON.stringify(state.batches)) {
+                    state.batches = newBatches;
+                    renderBatches();
+                }
+            } else {
+                renderBatches();
+            }
+        }
+
+        /* ── 14. AUDIT LOGS LOADER ──────────────────────────────────────────────── */
+        async function loadAuditLogs() {
+            const logs = await apiFetch('/api/audit/logs');
+            if (!logs) return;
+            const newLogs = logs.map(l => ({
+                id: String(l.id), user: l.user, action: l.action,
+                ip: l.ip, time: l.time, details: l.details
+            }));
+            if (JSON.stringify(newLogs) !== JSON.stringify(state.auditLogs)) {
+                state.auditLogs = newLogs;
+                renderAuditLogs();
+            }
+        }
+
+        /* ── 15. APPROVAL LIST LOADER ───────────────────────────────────────────── */
+        async function loadApprovalList() {
+            const runs = await apiFetch('/api/approval/list');
+            if (!runs) return;
+            const normalize = (r) => ({
+                id: r.id, version: r.version, model: r.model_name,
+                type: r.schedule_type, accuracy: 'N/A',
+                status: r.status, creator: r.created_by ?? '—', approver: '—'
+            });
+            const newRuns = runs.map(normalize);
+            if (JSON.stringify(newRuns) !== JSON.stringify(state.forecastRuns)) {
+                state.forecastRuns = newRuns;
+                renderWorkflowQueue();
+            }
+        }
+
+        /* ── 16. AI INSIGHTS LOADER ─────────────────────────────────────────────── */
+        async function loadLLMInsights() {
+            const container = document.getElementById('insights-container');
+            if (!container) return;
+            container.innerHTML = `<div style="color:var(--text-muted);padding:2rem 0;text-align:center;">Loading AI insights…</div>`;
+            const insights = await apiFetch('/api/llm/analysis');
+            if (!insights || insights.length === 0) {
+                container.innerHTML = `<div style="color:var(--text-muted);padding:2rem 0;text-align:center;">No AI insights available yet. Run a forecast to generate analysis.</div>`;
+                return;
+            }
+            container.innerHTML = insights.map(ins => {
+                const riskBadges = (ins.risks_detected || []).map(r =>
+                    `<span style="display:inline-block;padding:0.2rem 0.6rem;border-radius:20px;font-size:0.72rem;font-weight:600;margin-right:6px;
+                        background:${r.level==='High'?'rgba(239,68,68,0.15)':r.level==='Medium'?'rgba(245,158,11,0.15)':'rgba(16,185,129,0.12)'};
+                        color:${r.level==='High'?'#ef4444':r.level==='Medium'?'#f59e0b':'#10b981'}">${r.level}: ${r.description}</span>`
+                ).join('');
+                return `
+                <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                        <span style="font-weight:700;font-size:1rem;">${ins.model_name} — ${ins.provider?.toUpperCase() ?? 'AI'} Analysis</span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);">${new Date(ins.created_at).toLocaleString()}</span>
+                    </div>
+                    <p style="color:var(--text-secondary);margin-bottom:0.75rem;line-height:1.6;">${ins.summary}</p>
+                    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.75rem;">${ins.explanation}</p>
+                    ${riskBadges ? `<div style="margin-top:0.5rem;">${riskBadges}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        /* ── 17. USERS LOADER ───────────────────────────────────────────────────── */
+        async function loadUsers() {
+            const tbody = document.getElementById('users-tbody');
+            if (state.currentUser.role !== 'Admin') {
+                if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">Admin access required to view user accounts.</td></tr>`;
+                return;
+            }
+            // Show skeleton only if table is currently empty
+            if (tbody && state.users.length === 0) tbody.innerHTML = skeletonRows(6);
+            const users = await apiFetch('/api/users');
+            if (!users) return;
+            const newUsers = users.map(u => ({
+                id: u.id, username: u.username, email: u.email,
+                role: u.role, status: u.is_active ? 'Active' : 'Inactive'
+            }));
+            if (JSON.stringify(newUsers) !== JSON.stringify(state.users)) {
+                state.users = newUsers;
+                renderUsers();
+            }
+        }
+
+        /* ── 18. RENDER FUNCTIONS ───────────────────────────────────────────────── */
+
+        function renderBatches() {
+            const tbody = document.getElementById('upload-batches-tbody');
+            if (!tbody) return;
+            if (state.batches.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">No ingestion batches found. Upload a SAP file to begin.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = state.batches.map(b => {
+                let pillClass = 'approved';
+                if (b.status === 'Failed') pillClass = 'rejected';
+                else if (b.status === 'Pending' || b.status === 'Processing') pillClass = 'pending';
+
+                const errDisplay = (b.errors > 0 || b.status === 'Failed')
+                    ? `<span style="color:var(--danger);font-weight:600;" title="${b.errorMsg || 'Failed'}">${b.errors || 1} error${(b.errors||1) > 1 ? 's' : ''}${b.errorMsg ? `: ${b.errorMsg}` : ''}</span>`
+                    : '<span style="color:var(--success);font-weight:500;">0 errors</span>';
+
+                return `
+                <tr>
+                    <td><strong>${b.id}</strong></td>
+                    <td>${b.filename}</td>
+                    <td>${b.uploadedBy}</td>
+                    <td>${b.type}</td>
+                    <td><span class="status-pill ${pillClass}">${b.status}</span></td>
+                    <td>${(b.records||0).toLocaleString()}</td>
+                    <td>${errDisplay}</td>
+                    <td>${b.time}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function renderForecastRuns() {
+            const tbody = document.getElementById('forecast-runs-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = state.forecastRuns.map(run => {
+                let pillClass = run.status.toLowerCase().replace(/\s+/g, '');
+                if (pillClass === 'pendingapproval') pillClass = 'pending';
+                return `
+                    <tr>
+                        <td><strong>${run.id}</strong></td>
+                        <td>v${run.version}</td>
+                        <td>${run.model}</td>
+                        <td>${run.type}</td>
+                        <td>${run.accuracy}</td>
+                        <td><span class="status-pill ${pillClass}">${run.status}</span></td>
+                        <td>${run.creator}</td>
+                        <td>${run.approver}</td>
+                        <td>
+                            <div class="action-btns">
+                                ${run.status === 'Draft' ? `
+                                    <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" onclick="submitWorkflow('${run.id}')">Submit Approval</button>
+                                ` : '-'}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Dashboard preview – top 3 only
+            const dashTbody = document.getElementById('dashboard-runs-tbody');
+            if (dashTbody) {
+                dashTbody.innerHTML = state.forecastRuns.slice(0, 3).map(run => {
+                    let pillClass = run.status.toLowerCase().replace(/\s+/g, '');
+                    if (pillClass === 'pendingapproval') pillClass = 'pending';
+                    return `
+                        <tr>
+                            <td><strong>${run.id}</strong></td>
+                            <td>v${run.version}</td>
+                            <td>${run.model}</td>
+                            <td>${run.accuracy}</td>
+                            <td><span class="status-pill ${pillClass}">${run.status}</span></td>
+                            <td>${run.creator}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function renderWorkflowQueue() {
+            const tbody = document.getElementById('workflow-tbody');
+            if (!tbody) return;
+            const pendingRuns = state.forecastRuns.filter(r => r.status === 'Pending Approval');
+
+            if (pendingRuns.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem 0;">No pending forecasts require audit approval.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pendingRuns.map(run => `
+                <tr>
+                    <td><strong>${run.id}</strong></td>
+                    <td>v${run.version}</td>
+                    <td>${run.model}</td>
+                    <td>12 Periods</td>
+                    <td>${run.creator}</td>
+                    <td><span class="status-pill pending">${run.status}</span></td>
+                    <td><input type="text" class="form-control" style="padding: 0.4rem; background: rgba(0,0,0,0.2);" placeholder="Reviewer notes..." id="note-${run.id}"></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; background-color: var(--success);" onclick="approveWorkflow('${run.id}', true)">Approve</button>
+                            <button class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; background-color: var(--danger);" onclick="approveWorkflow('${run.id}', false)">Reject</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = state.users.map(u => `
+                <tr>
+                    <td><strong>US-${u.id.toString().padStart(3, '0')}</strong></td>
+                    <td>${u.username}</td>
+                    <td>${u.email}</td>
+                    <td><span class="role-badge">${u.role}</span></td>
+                    <td><span class="status-pill approved">${u.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn" onclick="editUser(${u.id})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                            </button>
+                            <button class="action-btn delete" onclick="deleteUser(${u.id})">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAuditLogs() {
+            const tbody = document.getElementById('audit-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = state.auditLogs.map(l => `
+                <tr>
+                    <td><strong>${l.id}</strong></td>
+                    <td>${l.user}</td>
+                    <td><span style="font-family: monospace; font-weight: 600;">${l.action}</span></td>
+                    <td>${l.ip}</td>
+                    <td>${l.time}</td>
+                    <td><code style="font-size: 0.8rem; background-color: rgba(0,0,0,0.2); padding: 0.2rem 0.4rem; border-radius: 4px; color: var(--primary);">${l.details}</code></td>
+                </tr>
+            `).join('');
+        }
+
+        function handleAuditSearch() {
+            const q   = (document.getElementById('audit-search')?.value || '').toLowerCase();
+            const act = document.getElementById('audit-filter-action')?.value || 'all';
+            const filtered = state.auditLogs.filter(l => {
+                const matchAct = act === 'all' || l.action.includes(act);
+                const matchQ   = !q || l.user.toLowerCase().includes(q) || l.action.toLowerCase().includes(q) || l.details.toLowerCase().includes(q);
+                return matchAct && matchQ;
+            });
+            const tbody = document.getElementById('audit-tbody');
+            if (!tbody) return;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem;">No matching log entries found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = filtered.map(l => `
+                <tr>
+                    <td><strong>${l.id}</strong></td>
+                    <td>${l.user}</td>
+                    <td><span style="font-family:monospace;font-weight:600;">${l.action}</span></td>
+                    <td>${l.ip}</td>
+                    <td>${l.time}</td>
+                    <td><code style="font-size:0.8rem;background-color:rgba(0,0,0,0.2);padding:0.2rem 0.4rem;border-radius:4px;color:var(--primary);">${l.details}</code></td>
+                </tr>
+            `).join('');
+        }
+
+        function clearLogsSimulation() {
+            state.auditLogs = [];
+            renderAuditLogs();
+            showToast('Simulation logs cleared.', 'info');
+        }
+
+        /* ==========================================================================
+           19. CHART.JS POWERED GRAPH SYSTEM
+               All charts reuse the same canvas instance.
+               chart.update() replaces innerHTML recreation entirely.
+           ========================================================================== */
+
+        const CHART_DEFAULTS = {
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(13,18,34,0.95)',
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    borderWidth: 1,
+                    titleColor: '#ffffff',
+                    bodyColor: 'rgba(148,163,184,0.9)',
+                    padding: 12,
+                    cornerRadius: 8
+                }
+            }
+        };
+
+        function renderCharts() {
+            renderRevenueChart();
+            renderBreakdownChart();
+            renderExpenseForecastChart();
+        }
+
+        function renderRevenueChart() {
+            const canvas = document.getElementById('revenue-chart-canvas');
+            if (!canvas) return;
+
+            const months    = state.financialSeries.months;
+            const actuals   = state.financialSeries.actuals;
+            const forecasts = state.financialSeries.forecasts;
+
+            // Build two aligned series
+            const actualData   = months.map((_, i) => actuals[i]   ?? null);
+            const forecastData = months.map((_, i) => forecasts[i] ?? null);
+
+            const data = {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Actual Baseline',
+                        data: actualData,
+                        borderColor: '#00e5ff',
+                        backgroundColor: 'rgba(0,229,255,0.08)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#00e5ff',
+                        pointRadius: 4.5,
+                        pointHoverRadius: 7,
+                        tension: 0.35,
+                        fill: true,
+                        spanGaps: false
+                    },
+                    {
+                        label: 'Projections (XGBoost 12M)',
+                        data: forecastData,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139,92,246,0.06)',
+                        borderWidth: 3,
+                        borderDash: [6, 5],
+                        pointBackgroundColor: '#8b5cf6',
+                        pointRadius: 4.5,
+                        pointHoverRadius: 7,
+                        tension: 0.35,
+                        fill: true,
+                        spanGaps: false
+                    }
+                ]
+            };
+
+            if (chartInstances.revenue) {
+                chartInstances.revenue.data = data;
+                chartInstances.revenue.update('none'); // 'none' = instant, no animation on SWR refresh
+            } else {
+                chartInstances.revenue = new Chart(canvas, {
+                    type: 'line',
+                    data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { intersect: false, mode: 'index' },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(255,255,255,0.04)' },
+                                ticks: { maxRotation: 0, font: { size: 10 } }
+                            },
+                            y: {
+                                grid: { color: 'rgba(255,255,255,0.04)' },
+                                ticks: {
+                                    callback: v => `€${v}M`,
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        plugins: {
+                            ...CHART_DEFAULTS.plugins,
+                            legend: { display: false }
+                        },
+                        animation: { duration: 600, easing: 'easeOutQuart' }
+                    }
+                });
+            }
+        }
+
+        function renderBreakdownChart() {
+            const canvas = document.getElementById('breakdown-chart-canvas');
+            if (!canvas) return;
+
+            const data = {
+                labels: ['Rev (400k)', 'Salary (500k)', 'Operations (600k)', 'Depr (700k)'],
+                datasets: [{
+                    data: [8.5, 4.2, 2.1, 1.1],
+                    backgroundColor: ['#0ea5e9', '#3b82f6', '#8b5cf6', '#f43f5e'],
+                    borderColor: '#0d1222',
+                    borderWidth: 3,
+                    hoverOffset: 12
+                }]
+            };
+
+            if (chartInstances.breakdown) {
+                chartInstances.breakdown.data = data;
+                chartInstances.breakdown.update('none');
+            } else {
+                chartInstances.breakdown = new Chart(canvas, {
+                    type: 'doughnut',
+                    data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: {
+                            ...CHART_DEFAULTS.plugins,
+                            legend: { display: false },
+                            tooltip: {
+                                ...CHART_DEFAULTS.plugins.tooltip,
+                                callbacks: {
+                                    label: ctx => ` ${ctx.label}: €${ctx.parsed.toFixed(1)}M`
+                                }
+                            }
+                        },
+                        animation: { animateRotate: true, duration: 700, easing: 'easeOutQuart' }
+                    }
+                });
+            }
+        }
+
+        /**
+         * renderExpenseForecastChart
+         * Renders the Forecast Analytics bar chart with real API data.
+         * @param {string[]} histLabels  - historical period labels
+         * @param {number[]} histValues  - historical actual values
+         * @param {string[]} fcastLabels - forecast period labels
+         * @param {number[]} fcastValues - forecast values
+         * @param {string}   modelName   - selected model name
+         */
+        function renderExpenseForecastChart(
+            histLabels  = [],
+            histValues  = [],
+            fcastLabels = [],
+            fcastValues = [],
+            modelName   = 'Forecast'
+        ) {
+            const canvas = document.getElementById('expense-forecast-chart-canvas');
+            if (!canvas) return;
+
+            // Combine labels; historical first, then forecast
+            const allLabels = [...histLabels, ...fcastLabels];
+            const histLen   = histLabels.length;
+            const totalLen  = allLabels.length;
+
+            // Actual series: real values for history, null for forecast
+            const actualData = allLabels.map((_, i) => i < histLen ? histValues[i] ?? null : null);
+
+            // Forecast series: null for history, real values for forecast portion
+            const forecastData = allLabels.map((_, i) =>
+                i >= histLen ? fcastValues[i - histLen] ?? null : null
+            );
+
+            // Smart Y-axis formatter: pick €M or €k based on magnitude
+            const allVals = [...histValues, ...fcastValues].filter(v => v != null && !isNaN(v));
+            const maxVal  = allVals.length ? Math.max(...allVals) : 1000;
+            const useMillions = maxVal >= 500_000;
+            const yFmt = v => useMillions ? `€${(v/1_000_000).toFixed(2)}M` : `€${(v/1_000).toFixed(0)}k`;
+
+            const data = {
+                labels: allLabels,
+                datasets: [
+                    {
+                        label: 'Actual / Historical',
+                        data: actualData,
+                        backgroundColor: allLabels.map((_, i) =>
+                            i < histLen
+                                ? `rgba(0,229,255,${0.45 + (i / Math.max(histLen,1)) * 0.35})`
+                                : 'transparent'
+                        ),
+                        borderColor: 'rgba(0,229,255,0.7)',
+                        borderWidth: 1.5,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                        type: 'bar'
+                    },
+                    {
+                        label: `${modelName} Forecast`,
+                        data: forecastData,
+                        backgroundColor: allLabels.map((_, i) =>
+                            i >= histLen
+                                ? `rgba(139,92,246,${0.55 + ((i-histLen) / Math.max(fcastLabels.length,1)) * 0.35})`
+                                : 'transparent'
+                        ),
+                        borderColor: 'rgba(139,92,246,0.85)',
+                        borderWidth: 1.5,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                        type: 'bar'
+                    }
+                ]
+            };
+
+            const opts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { intersect: false, mode: 'index' },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 9 }, maxRotation: 45, maxTicksLimit: 24 }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: { callback: yFmt, font: { size: 10 } }
+                    }
+                },
+                plugins: {
+                    ...CHART_DEFAULTS.plugins,
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: 'rgba(148,163,184,0.9)',
+                            font: { size: 10 },
+                            boxWidth: 12,
+                            padding: 12
+                        }
+                    },
+                    tooltip: {
+                        ...CHART_DEFAULTS.plugins.tooltip,
+                        callbacks: {
+                            label: ctx => ` ${ctx.dataset.label}: ${yFmt(ctx.parsed.y)}`
+                        }
+                    }
+                },
+                animation: { duration: 700, easing: 'easeOutQuart' }
+            };
+
+            if (chartInstances.expense) {
+                chartInstances.expense.data = data;
+                chartInstances.expense.options = opts;
+                chartInstances.expense.update();
+            } else {
+                chartInstances.expense = new Chart(canvas, { type: 'bar', data, options: opts });
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            Object.values(chartInstances).forEach(c => c.resize());
+        });
+
+        /* ========================================================================
+           FORECAST ANALYTICS — REAL-TIME ENGINE
+           All functions below are scoped to the Forecast Analytics panel only.
+           ======================================================================== */
+
+        // Tracks the last successful analytics response for CSV export
+        let _lastAnalyticsResult = null;
+        let _analyticsDebounceTimer = null;
+
+        /**
+         * onAnalyticsFilterChange
+         * Debounced handler for model/period dropdown changes.
+         * Prevents rapid-fire API calls when user toggles quickly.
+         */
+        function onAnalyticsFilterChange() {
+            clearTimeout(_analyticsDebounceTimer);
+            _analyticsDebounceTimer = setTimeout(() => loadForecastAnalytics(), 200);
+        }
+
+        /**
+         * loadForecastAnalytics
+         * Main real-time orchestrator:
+         *   1. Shows loading overlay on chart
+         *   2. Calls POST /api/forecast/run-model (selected model + horizon)
+         *   3. Updates metric cards (MAE, RMSE, MAPE, R²)
+         *   4. Calls renderForecastAnalyticsChart with real data
+         *   5. Calls loadComparisonTable to refresh the table
+         */
+        async function loadForecastAnalytics() {
+            const modelSel  = document.getElementById('analytics-filter-model');
+            const periodSel = document.getElementById('analytics-filter-period');
+            if (!modelSel || !periodSel) return;
+
+            const modelName = modelSel.value;
+            const horizon   = parseInt(periodSel.value) || 12;
+
+            // ── Show loading states ───────────────────────────────────────────
+            const overlay     = document.getElementById('analytics-chart-overlay');
+            const runStatus   = document.getElementById('analytics-run-status');
+            const statusText  = document.getElementById('analytics-status-text');
+            const badge       = document.getElementById('analytics-model-badge');
+            const chartTitle  = document.getElementById('analytics-chart-title');
+
+            if (overlay) { 
+                overlay.style.display = 'flex'; 
+                overlay.innerHTML = `
+                    <div style="width:36px;height:36px;border:3px solid rgba(0,229,255,0.15);border-top-color:var(--primary);border-radius:50%;animation:spin-anim 0.8s linear infinite;"></div>
+                    <span style="font-size:0.8rem;color:var(--text-muted);" id="analytics-overlay-text">Running ${modelName} model…</span>
+                `;
+            }
+            if (runStatus) { runStatus.style.display = 'flex'; }
+            if (statusText) statusText.textContent = `Running ${modelName}…`;
+
+            // Reset metric cards to loading state
+            ['analytics-mae-value','analytics-rmse-value','analytics-mape-value','analytics-r2-value']
+                .forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = '…'; el.style.opacity = '1'; } });
+
+            try {
+                // ── Call backend ──────────────────────────────────────────────────
+                const result = await apiFetch('/api/forecast/run-model', {
+                    method: 'POST',
+                    body: JSON.stringify({ model_name: modelName, horizon }),
+                    throwOnError: true
+                });
+
+                if (!result) {
+                    throw new Error("Empty response from forecasting service.");
+                }
+
+                // Hide loading overlays
+                if (overlay) overlay.style.display = 'none';
+                if (runStatus) runStatus.style.display = 'none';
+
+                _lastAnalyticsResult = result;
+
+                // ── Update model badge & chart title ─────────────────────────────
+                if (badge) badge.textContent = modelName;
+                if (chartTitle) chartTitle.textContent =
+                    `Operational Cost Forecast — Next ${horizon} Period${horizon !== 1 ? 's' : ''}`;
+
+                // ── Update metric cards ───────────────────────────────────────────
+                const metrics = result.metrics || {};
+                const fmtVal  = (v) => {
+                    if (v == null || isNaN(v)) return 'N/A';
+                    if (Math.abs(v) >= 1_000_000) return `€${(v/1_000_000).toFixed(2)}M`;
+                    if (Math.abs(v) >= 1_000)     return `€${(v/1_000).toFixed(1)}k`;
+                    return `€${v.toFixed(2)}`;
+                };
+
+                const setMetric = (id, value, style) => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.style.opacity = '0';
+                    el.textContent = value;
+                    el.style.opacity = '1';
+                    if (style) el.style.animation = 'fadeInUp 0.4s ease';
+                };
+
+                setMetric('analytics-mae-value',  fmtVal(metrics.MAE),  true);
+                setMetric('analytics-rmse-value', fmtVal(metrics.RMSE), true);
+                setMetric('analytics-mape-value', metrics.MAPE != null ? `${metrics.MAPE.toFixed(2)}%` : 'N/A', true);
+                setMetric('analytics-r2-value',   metrics.R2   != null ? metrics.R2.toFixed(4) : 'N/A', true);
+
+                // ── Render chart with real data ───────────────────────────────────
+                const historical = result.historical || [];
+                const forecast   = result.forecast_values || [];
+
+                const histLabels  = historical.map(p => p.period);
+                const histValues  = historical.map(p => p.value);
+                const fcastLabels = forecast.map(p => p.period);
+                const fcastValues = forecast.map(p => p.value);
+
+                renderExpenseForecastChart(histLabels, histValues, fcastLabels, fcastValues, modelName);
+
+                // ── Load comparison table (all models from DB, non-blocking) ──────
+                loadComparisonTable(modelName, metrics);
+
+            } catch (err) {
+                // Hide run status bar
+                if (runStatus) runStatus.style.display = 'none';
+
+                const errMsg = err.message || 'Server error';
+
+                // API failed — show error in metric cards
+                ['analytics-mae-value','analytics-rmse-value','analytics-mape-value','analytics-r2-value']
+                    .forEach(id => { const el = document.getElementById(id); if (el) { el.textContent = 'Error'; el.style.opacity = '0.5'; } });
+
+                // Show error state on the chart overlay
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                    overlay.innerHTML = `
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="margin-bottom:0.25rem;">
+                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span style="font-size:0.85rem;color:#ef4444;font-weight:600;">Forecasting Failed</span>
+                        <span style="font-size:0.75rem;color:var(--text-muted);text-align:center;padding:0 1.5rem;max-width:320px;">${errMsg}</span>
+                        <button class="btn btn-outline" style="margin-top:0.75rem;padding:0.3rem 0.8rem;font-size:0.75rem;" onclick="loadForecastAnalytics()">Retry Model</button>
+                    `;
+                }
+
+                showToast(`Forecast model '${modelName}' failed: ${errMsg}`, 'error');
+            }
+        }
+
+        /**
+         * loadComparisonTable
+         * Fetches /api/forecast/analytics-summary and builds the comparison table.
+         * Also injects the currently-selected model's freshly computed metrics.
+         */
+        async function loadComparisonTable(activeModel, activeMetrics) {
+            const tbody = document.getElementById('forecast-comparison-tbody');
+            if (!tbody) return;
+
+            try {
+                const summary = await apiFetch('/api/forecast/analytics-summary', { throwOnError: true });
+                const dbModels = summary ? (summary.models || []) : [];
+
+                // Build a map: model_name -> row data
+                const rowMap = {};
+                dbModels.forEach(m => {
+                    rowMap[m.model_name] = {
+                        model_name:    m.model_name,
+                        mae:           m.metrics?.MAE,
+                        rmse:          m.metrics?.RMSE,
+                        mape:          m.metrics?.MAPE,
+                        r2:            m.metrics?.R2,
+                        is_best_model: m.is_best_model,
+                        status:        m.status,
+                        fromDb:        true
+                    };
+                });
+
+                // Override / add the actively computed model with fresh metrics
+                if (activeModel && activeMetrics) {
+                    rowMap[activeModel] = {
+                        ...(rowMap[activeModel] || {}),
+                        model_name:    activeModel,
+                        mae:           activeMetrics.MAE,
+                        rmse:          activeMetrics.RMSE,
+                        mape:          activeMetrics.MAPE,
+                        r2:            activeMetrics.R2,
+                        is_best_model: (rowMap[activeModel] || {}).is_best_model || false,
+                        status:        (rowMap[activeModel] || {}).status || 'Draft',
+                        fromDb:        false
+                    };
+                }
+
+                // If we have no DB data, ensure we still show something for available models
+                const availableModels = summary?.available_models || ['ARIMA','ETS','RandomForest','XGBoost'];
+                availableModels.forEach(m => {
+                    if (!rowMap[m]) {
+                        rowMap[m] = { model_name: m, mae: null, rmse: null, mape: null, r2: null,
+                            is_best_model: false, status: 'Not Run', fromDb: false };
+                    }
+                });
+
+                // Remove Prophet and LSTM rows — these models are no longer active.
+                // Stale DB entries may still exist if they were previously run.
+                ['Prophet', 'LSTM'].forEach(m => delete rowMap[m]);
+
+                // Find best MAPE among models with data
+                const withMape = Object.values(rowMap).filter(r => r.mape != null);
+                let bestModel  = null;
+                if (withMape.length) {
+                    bestModel = withMape.reduce((a, b) => a.mape < b.mape ? a : b).model_name;
+                }
+
+                // Sort: active model first, then by MAPE ascending
+                const rows = Object.values(rowMap).sort((a, b) => {
+                    if (a.model_name === activeModel) return -1;
+                    if (b.model_name === activeModel) return 1;
+                    if (a.mape != null && b.mape != null) return a.mape - b.mape;
+                    return 0;
+                });
+
+                const fmtMetric = (v, prefix = '', suffix = '') =>
+                    v != null && !isNaN(v)
+                        ? `${prefix}${Math.abs(v) >= 1_000_000 ? (v/1_000_000).toFixed(2)+'M' : Math.abs(v) >= 1_000 ? (v/1_000).toFixed(1)+'k' : v.toFixed(2)}${suffix}`
+                        : 'N/A';
+
+                tbody.innerHTML = rows.map(r => {
+                    const isActive = r.model_name === activeModel;
+                    const isBest   = r.model_name === bestModel;
+
+                    let pillClass = 'pending';
+                    let pillLabel = 'Available';
+                    if (isActive && isBest) { pillClass = 'approved'; pillLabel = 'Best ★ Active'; }
+                    else if (isActive)      { pillClass = 'approved'; pillLabel = 'Active'; }
+                    else if (isBest)        { pillClass = 'approved'; pillLabel = 'Best Model'; }
+                    else if (r.status === 'Not Run') { pillClass = ''; pillLabel = 'Not Run'; }
+
+                    const rowStyle = isActive
+                        ? 'font-weight:600;background:rgba(139,92,246,0.08);animation:fadeInUp 0.3s ease;'
+                        : isBest
+                            ? 'background:rgba(16,185,129,0.05);'
+                            : '';
+
+                    return `<tr style="${rowStyle}">
+                        <td style="${isActive ? 'color:var(--primary);' : ''}">${r.model_name}</td>
+                        <td>${fmtMetric(r.mae, '€')}</td>
+                        <td>${fmtMetric(r.rmse, '€')}</td>
+                        <td>${r.mape != null ? r.mape.toFixed(2) + '%' : 'N/A'}</td>
+                        <td>${r.r2 != null ? r.r2.toFixed(4) : 'N/A'}</td>
+                        <td><span class="status-pill ${pillClass}">${pillLabel}</span></td>
+                    </tr>`;
+                }).join('');
+            } catch (err) {
+                console.error("Comparison load failed:", err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:#ef4444;padding:2rem;">
+                            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;">
+                                <span style="font-weight:600;">Failed to load comparison data</span>
+                                <span style="font-size:0.75rem;color:var(--text-muted);">${err.message || 'Check backend service.'}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        /**
+         * exportForecastCSV
+         * Exports the last analytics run result as a CSV file.
+         */
+        function exportForecastCSV() {
+            if (!_lastAnalyticsResult) {
+                showToast('No forecast data to export. Run a model first.', 'warning');
+                return;
+            }
+            const r = _lastAnalyticsResult;
+            const rows = [
+                ['Period', 'Type', 'Value', 'Model', 'MAE', 'RMSE', 'MAPE', 'R2'],
+                ...(r.historical || []).map(p => [p.period, 'Historical', p.value, r.model_name, '', '', '', '']),
+                ...(r.forecast_values || []).map(p => [p.period, 'Forecast', p.value, r.model_name,
+                    r.metrics?.MAE ?? '', r.metrics?.RMSE ?? '', r.metrics?.MAPE ?? '', r.metrics?.R2 ?? ''])
+            ];
+            const csv = rows.map(row => row.map(v => `"${v}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url  = URL.createObjectURL(blob);
+            const a    = Object.assign(document.createElement('a'), {
+                href: url,
+                download: `SAP_Forecast_${r.model_name}_${new Date().toISOString().slice(0,10)}.csv`
+            });
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`Exported ${(r.historical||[]).length + (r.forecast_values||[]).length} rows as CSV.`, 'success');
+        }
+
+        /* ── 20. FILE UPLOAD ─────────────────────────────────────────────────────── */
+        let currentSelectedFile = null;
+        let isUploading = false;
+
+        function triggerFileSelect() {
+            if (isUploading) return;
+            const input = document.getElementById('hidden-file-input');
+            if (input) input.click();
+        }
+
+        function validateFile(file) {
+            if (!file) return false;
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (ext !== 'csv' && ext !== 'xlsx') {
+                showToast('Invalid file format. Only CSV (.csv) and Excel (.xlsx) files are supported.', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function setSelectedFile(file) {
+            if (!validateFile(file)) return;
+            currentSelectedFile = file;
+            const nameEl = document.getElementById('selected-filename-text');
+            const sizeEl = document.getElementById('selected-filesize-text');
+            const displayEl = document.getElementById('selected-file-display');
+            const btnUpload = document.getElementById('btn-upload-dataset');
+
+            if (nameEl) nameEl.innerText = file.name;
+            if (sizeEl) {
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                sizeEl.innerText = file.size > 1024 * 1024 ? `${sizeInMB} MB` : `${Math.round(file.size / 1024)} KB`;
+            }
+            if (displayEl) displayEl.style.display = 'flex';
+            if (btnUpload) btnUpload.disabled = false;
+        }
+
+        function clearSelectedFile(event) {
+            if (event) event.stopPropagation();
+            if (isUploading) return;
+            currentSelectedFile = null;
+            const input = document.getElementById('hidden-file-input');
+            const displayEl = document.getElementById('selected-file-display');
+            const btnUpload = document.getElementById('btn-upload-dataset');
+
+            if (input) input.value = '';
+            if (displayEl) displayEl.style.display = 'none';
+            if (btnUpload) btnUpload.disabled = true;
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) setSelectedFile(file);
+        }
+
+        async function executeUpload() {
+            if (!currentSelectedFile || isUploading) return;
+
+            isUploading = true;
+            const file = currentSelectedFile;
+            const name = file.name;
+
+            const btnUpload = document.getElementById('btn-upload-dataset');
+            const btnBrowse = document.getElementById('btn-browse-file');
+            if (btnUpload) {
+                btnUpload.disabled = true;
+                btnUpload.innerHTML = '<span class="upload-spinner" style="margin-right: 8px;"></span> Uploading...';
+            }
+            if (btnBrowse) btnBrowse.disabled = true;
+
+            const area = document.getElementById('upload-progress-area');
+            const spinner = document.getElementById('upload-spinner-icon');
+            const statusText = document.getElementById('upload-status-text');
+            const fileNameText = document.getElementById('uploading-file-name');
+            const pctText = document.getElementById('upload-percentage');
+            const progressBar = document.getElementById('upload-progress-bar');
+
+            if (area) area.style.display = 'block';
+            if (spinner) spinner.style.display = 'inline-block';
+            if (fileNameText) fileNameText.innerText = name;
+            if (statusText) statusText.innerText = 'Uploading dataset to server...';
+            if (pctText) pctText.innerText = '0%';
+            if (progressBar) progressBar.style.width = '0%';
+
+            let pct = 0;
+            const fakeInterval = setInterval(() => {
+                pct = Math.min(pct + 15, 85);
+                if (pctText) pctText.innerText = pct + '%';
+                if (progressBar) progressBar.style.width = pct + '%';
+            }, 150);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const result = await apiFetch('/api/ingestion/upload', {
+                    method: 'POST',
+                    body: formData,
+                    throwOnError: true
+                });
+
+                clearInterval(fakeInterval);
+
+                if (!result) {
+                    throw new Error('Upload request failed or rejected by backend server.');
+                }
+
+                if (pctText) pctText.innerText = '100%';
+                if (progressBar) progressBar.style.width = '100%';
+                if (statusText) statusText.innerText = 'Ingesting data and triggering background validation...';
+
+                const jobId = result.job_id || result.id || 'N/A';
+
+                setTimeout(async () => {
+                    if (spinner) spinner.style.display = 'none';
+                    if (area) area.style.display = 'none';
+                    showToast(`✅ Dataset "${name}" uploaded successfully! Job ID: ${jobId}`, 'success');
+                    clearSelectedFile();
+                    await loadBatches();
+                    await loadAuditLogs();
+                    isUploading = false;
+                    if (btnUpload) {
+                        btnUpload.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Dataset`;
+                    }
+                    if (btnBrowse) btnBrowse.disabled = false;
+                }, 1000);
+
+            } catch (err) {
+                clearInterval(fakeInterval);
+                if (spinner) spinner.style.display = 'none';
+                if (pctText) pctText.innerText = 'Error';
+                const errMsg = err.message || 'Network error';
+                if (statusText) statusText.innerText = `Upload failed: ${errMsg}`;
+                showToast(`Upload failed: ${errMsg}`, 'error');
+
+                setTimeout(() => { if (area) area.style.display = 'none'; }, 4000);
+                isUploading = false;
+                if (btnUpload) {
+                    btnUpload.disabled = false;
+                    btnUpload.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Dataset`;
+                }
+                if (btnBrowse) btnBrowse.disabled = false;
+            }
+        }
+
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('upload-drag-drop-area');
+            if (!dropZone) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    if (!isUploading) dropZone.classList.add('drag-over');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('drag-over');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                if (isUploading) return;
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    setSelectedFile(files[0]);
+                }
+            }, false);
+        }
+
+        /* ── 21. FORECAST RUN ────────────────────────────────────────────────────── */
+        async function handleCreateForecast(event) {
+            event.preventDefault();
+            const schedRaw = document.getElementById('forecast-schedule').value;
+            const horizon  = parseInt(document.getElementById('forecast-horizon').value) || 12;
+            const glAcct   = document.getElementById('forecast-filters').value;
+
+            const schedMap = {
+                'Monthly Forecast':   'Monthly Forecast',
+                'Quarterly Forecast': 'Quarterly Forecast',
+                'Weekly Forecast':    'Weekly Forecast',
+                'AdHoc':              'AdHoc'
+            };
+
+            const btn = document.getElementById('btn-run-forecast');
+            btn.disabled = true;
+            btn.innerHTML = '<span style="opacity:.7">Launching…</span>';
+
+            const result = await apiFetch('/api/forecast/run', {
+                method: 'POST',
+                body: JSON.stringify({
+                    schedule_type: schedMap[schedRaw] || 'Monthly Forecast',
+                    horizon,
+                    gl_account: glAcct !== 'all' ? glAcct : null
+                })
+            });
+
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg> Run ML Forecast Engines`;
+
+            if (!result) {
+                showToast('Forecast run failed. Check backend and permissions.', 'error');
+                return;
+            }
+
+            showToast(`✅ Forecast triggered! Job ID: ${result.job_id}. Results will appear shortly.`, 'success');
+            setTimeout(() => loadForecastList(), 3000);
+        }
+
+        /* ── 22. APPROVAL WORKFLOW ───────────────────────────────────────────────── */
+        async function submitWorkflow(runId) {
+            const result = await apiFetch(`/api/approval/${runId}/submit`, { method: 'POST' });
+            if (!result) { showToast('Submission failed. Analyst role required.', 'error'); return; }
+            showToast('Forecast submitted for approval!', 'success');
+            await loadForecastList();
+        }
+
+        async function approveWorkflow(runId, approve) {
+            const comments = document.getElementById(`note-${runId}`)?.value || '';
+            const endpoint = approve ? `/api/approval/${runId}/approve` : `/api/approval/${runId}/reject`;
+            const result = await apiFetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({ comments })
+            });
+            if (!result) {
+                showToast(`Action failed. Finance Manager or Admin role required.`, 'error');
+                return;
+            }
+            showToast(approve ? `✅ Forecast #${runId} approved!` : `❌ Forecast #${runId} rejected.`, approve ? 'success' : 'warning');
+            await Promise.allSettled([loadForecastList(), loadApprovalList()]);
+            renderWorkflowQueue();
+        }
+
+        /* ── 23. PROFILE SETTINGS ───────────────────────────────────────────────── */
+        async function handleSaveProfile(event) {
+            event.preventDefault();
+            showToast('Profile settings saved locally.', 'success');
+        }
+
+        /* ── 24. USER MANAGEMENT MODAL ──────────────────────────────────────────── */
+        function openAddUserModal() {
+            document.getElementById('user-modal-title').innerText = 'Create User Account';
+            document.getElementById('user-modal-id').value = '';
+            document.getElementById('modal-user-username').value = '';
+            document.getElementById('modal-user-email').value = '';
+            document.getElementById('modal-user-role').value = 'Analyst';
+            const overlay = document.getElementById('user-modal');
+            overlay.style.display = 'flex';
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-modal').style.display = 'none';
+        }
+
+        async function handleSaveUser(event) {
+            event.preventDefault();
+            const idVal    = document.getElementById('user-modal-id').value;
+            const username = document.getElementById('modal-user-username').value.trim();
+            const email    = document.getElementById('modal-user-email').value.trim();
+            const role     = document.getElementById('modal-user-role').value;
+
+            if (idVal) {
+                // Update
+                const result = await apiFetch(`/api/users/${idVal}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ username, email, role })
+                });
+                if (!result) { showToast('Update failed.', 'error'); return; }
+                showToast(`User "${username}" updated successfully.`, 'success');
+            } else {
+                // Create
+                const result = await apiFetch('/api/users', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, email, role, password: 'password' })
+                });
+                if (!result) { showToast('Create failed. Admin access required.', 'error'); return; }
+                showToast(`User "${username}" created!`, 'success');
+            }
+            closeUserModal();
+            await loadUsers();
+        }
+
+        async function editUser(id) {
+            const user = state.users.find(u => u.id === id);
+            if (!user) return;
+            document.getElementById('user-modal-title').innerText = 'Edit User Account';
+            document.getElementById('user-modal-id').value   = user.id;
+            document.getElementById('modal-user-username').value = user.username;
+            document.getElementById('modal-user-email').value    = user.email;
+            document.getElementById('modal-user-role').value     = user.role;
+            document.getElementById('user-modal').style.display = 'flex';
+        }
+
+        async function deleteUser(id) {
+            const user = state.users.find(u => u.id === id);
+            if (!user) return;
+            if (!confirm(`Delete user "${user.username}"? This cannot be undone.`)) return;
+            const result = await apiFetch(`/api/users/${id}`, { method: 'DELETE' });
+            if (!result) { showToast('Delete failed. Admin access required.', 'error'); return; }
+            showToast(`User "${user.username}" deleted.`, 'warning');
+            await loadUsers();
+        }
+
+        /* ── 25. LEGACY LOCAL AUDIT LOG FALLBACK ─────────────────────────────────── */
+        function addAuditLog(user, action, detailMsg) {
+            const id  = 'L-' + Date.now();
+            const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            state.auditLogs.unshift({ id, user, action, ip: '127.0.0.1', time: now, details: JSON.stringify({ message: detailMsg }) });
+            renderAuditLogs();
+        }
+    </script>
+</body>
+</html>
+
