@@ -1,7 +1,6 @@
-# SAP-Forecasting-Enterprises-AI-Model
-SAP Forecasting Enterprise AI Model is an AI-powered platform that integrates with SAP FI/CO to predict revenue, expenses, cash flow, and budget performance using machine learning models.   
+# SAP Enterprise Forecasting AI  
 
-# SAP Enterprise Forecasting AI Platform
+SAP Forecasting Enterprise AI Model is an AI-powered platform that integrates with SAP FI/CO to predict revenue, expenses, cash flow, and budget performance using machine learning models.   
 
 > Enterprise AI-Powered Financial Forecasting Platform built for SAP FI/CO using Machine Learning and Predictive Analytics.
 
